@@ -130,9 +130,10 @@ class _TimetableState<T> extends State<Timetable<T>> {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
       key: _key,
-      builder: (context, contraints) {
+      builder: (context, constraints) {
         return Column(
           children: [
+            //Header
             SizedBox(
               height: controller.headerHeight,
               child: Row(
@@ -170,6 +171,7 @@ class _TimetableState<T> extends State<Timetable<T>> {
                 ],
               ),
             ),
+            //Body
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 onNotification: (notification) {
@@ -191,13 +193,13 @@ class _TimetableState<T> extends State<Timetable<T>> {
                     height: controller.cellHeight * (controller.endHour - controller.startHour + 1),
                     child: Row(
                       children: [
+                        //Time Line
                         SizedBox(
                           width: controller.timelineWidth,
                           height: controller.cellHeight * (controller.endHour - controller.startHour + 1),
                           child: Column(
                             children: [
-                              SizedBox(height: controller.cellHeight / 2),
-                              for (var i = controller.startHour + 1;i < controller.endHour + 1;i++)
+                              for (var i = controller.startHour;i < controller.endHour + 1;i++)
                                 SizedBox(
                                   height: controller.cellHeight,
                                   child: Center(
@@ -209,6 +211,7 @@ class _TimetableState<T> extends State<Timetable<T>> {
                             ],
                           ),
                         ),
+                        //Cell
                         Expanded(
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
@@ -220,6 +223,7 @@ class _TimetableState<T> extends State<Timetable<T>> {
                               final events = widget.items.where((event) => DateUtils.isSameDay(date, event.start)).toList();
                               final now = DateTime.now();
                               final isToday = DateUtils.isSameDay(date, now);
+                              //A Day
                               return Container(
                                 clipBehavior: Clip.none,
                                 width: columnWidth,
@@ -227,6 +231,7 @@ class _TimetableState<T> extends State<Timetable<T>> {
                                 child: Stack(
                                   clipBehavior: Clip.none,
                                   children: [
+                                    //Bg
                                     Column(
                                       children: [
                                         for (int i = controller.startHour; i < controller.endHour + 1; i++)
@@ -239,6 +244,7 @@ class _TimetableState<T> extends State<Timetable<T>> {
                                           ),
                                       ],
                                     ),
+                                    //Event
                                     for (final TimetableItem<T> event in events)
                                       Positioned(
                                         top: (-controller.startHour + event.start.hour +
@@ -247,6 +253,7 @@ class _TimetableState<T> extends State<Timetable<T>> {
                                         height: event.duration.inMinutes * controller.cellHeight / 60,
                                         child: _buildEvent(event),
                                       ),
+                                    //Now Indicator
                                     if (isToday)
                                       Positioned(
                                         top: ((-controller.startHour + now.hour + (now.minute / 60.0)) *
@@ -366,6 +373,7 @@ class _TimetableState<T> extends State<Timetable<T>> {
   }
 
   bool _isSnapping = false;
+
   Future _snapToCloset() async {
     if (_isSnapping || !widget.snapToDay) return;
     _isSnapping = true;
