@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+
 /// A controller for the timetable.
 ///
 /// The controller allow intialization of the timetable and to expose timetable functionality to the outside.
@@ -31,7 +32,7 @@ class TimetableController {
     Function(TimetableControllerEvent)? onEvent,
   }) {
     _columns = initialColumns;
-    _start = DateUtils.dateOnly(start ?? DateTime.now());
+    _start = DateUtils.dateOnly( countMondays(start ?? DateTime.now() ));
     _startHour = startHour ?? 0;
     _endHour = endHour ?? 23;
     _cellHeight = cellHeight ?? 50;
@@ -39,6 +40,10 @@ class TimetableController {
     _timelineWidth = timelineWidth ?? 50;
     _visibleDateStart = _start;
     if (onEvent != null) addListener(onEvent);
+  }
+
+  DateTime countMondays(DateTime date) {
+    return date.subtract(Duration(days: date.weekday - 1));
   }
 
   late DateTime _start;
@@ -188,3 +193,7 @@ class TimetableVisibleDateChanged extends TimetableControllerEvent {
   TimetableVisibleDateChanged(this.start);
   final DateTime start;
 }
+
+class TimetableNextWeek extends TimetableControllerEvent {}
+
+class TimetablePreviousWeek extends TimetableControllerEvent {}
